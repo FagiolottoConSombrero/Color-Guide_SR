@@ -93,7 +93,7 @@ class EDSR(nn.Module):
         self.head = nn.Sequential(*m_head)
         self.body = nn.Sequential(*m_body)
         self.tail = nn.Sequential(*m_tail)
-        self.conv_rgb = default_conv(3, n_feats, kernel_size)
+        self.conv_rgb = default_conv(3, 31, kernel_size)
 
     def forward(self, x, y):
         x = self.head(x)
