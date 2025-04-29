@@ -1,7 +1,7 @@
 #from models.SPAN import *
 #from models.SSPSR import SSPSR
 from models.EDSR import EDSR
-#from models.RCAN import RCAN
+from models.RCAN import RCAN
 from engine import *
 from dataset import *
 import torch.optim as optim
@@ -49,6 +49,8 @@ def main():
     print("===> Building model")
     if opt.model == '1':
         model = EDSR(scale=opt.upscale)
+    if opt.model == '2':
+        model = RCAN(scale=opt.upscale)
 
     model = model.to(opt.device)
     if opt.loss == '1':

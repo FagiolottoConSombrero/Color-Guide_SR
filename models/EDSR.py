@@ -101,7 +101,7 @@ class EDSR(nn.Module):
         res = self.body(x)
         res += x
         x = x + self.conv_rgb(y)
-        x = self.tail(x)
+        x = self.tail(res + x)
         return x
 
 #model = EDSR() loss L1
