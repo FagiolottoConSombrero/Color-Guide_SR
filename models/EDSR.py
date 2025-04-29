@@ -93,14 +93,15 @@ class EDSR(nn.Module):
         self.head = nn.Sequential(*m_head)
         self.body = nn.Sequential(*m_body)
         self.tail = nn.Sequential(*m_tail)
+        self.conv_rgb = default_conv(3, n_feats, kernel_size)
 
     def forward(self, x, y):
-        x = self.head(torch.cat((x,y), dim=1))
+        x = self.head(x)
 
         res = self.body(x)
         res += x
-
-        x = self.tail(res)
+        x = x + self.conv_rgb(y)
+        x = self.tail(x)
         return x
 
 #model = EDSR() loss L1
