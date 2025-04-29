@@ -36,7 +36,7 @@ def main():
     train_x_rgb = os.path.join(opt.t_data_path, 'Train_RGB')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
     val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
-    val_x_rgb = os.path.join(opt.t_data_path, 'Valid_RGB')
+    val_x_rgb = os.path.join(opt.v_data_path, 'Valid_RGB')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
     print("===> Loading data")
