@@ -36,15 +36,15 @@ def main():
     train_x_rgb = os.path.join(opt.t_data_path, 'Train_RGB')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
     val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
-    val_x_rgb = os.path.join(opt.t_data_path, 'Train_RGB')
+    val_x_rgb = os.path.join(opt.t_data_path, 'Valid_RGB')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
     print("===> Loading data")
     train_set = AradDataset(train_x, train_x_rgb, train_y)
-    train_loader = DataLoader(train_set, batch_size=8, shuffle=True)
+    train_loader = DataLoader(train_set, batch_size=opt.batch_size, shuffle=True)
 
     valid_set = AradDataset(val_x, val_x_rgb, val_y)
-    valid_loader = DataLoader(valid_set, batch_size=8, shuffle=False)
+    valid_loader = DataLoader(valid_set, batch_size=opt.batch_size, shuffle=False)
 
     print("===> Building model")
     if opt.model == '1':

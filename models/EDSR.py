@@ -63,7 +63,7 @@ class Upsampler(nn.Sequential):
 
 
 class EDSR(nn.Module):
-    def __init__(self, n_resblocks=16, n_feats=128, scale=6, n_colors=31, conv=default_conv):
+    def __init__(self, n_resblocks=32, n_feats=256, scale=6, n_colors=31, conv=default_conv):
         super(EDSR, self).__init__()
 
         n_resblock = n_resblocks
