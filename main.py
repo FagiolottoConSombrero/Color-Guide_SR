@@ -1,5 +1,5 @@
 #from models.SPAN import *
-#from models.SSPSR import SSPSR
+from models.SSPSR import SSPSR
 from models.EDSR import EDSR
 from models.RCAN import RCAN
 from engine import *
@@ -56,6 +56,8 @@ def main():
         model = EDSR(scale=opt.upscale)
     if opt.model == '2':
         model = RCAN(scale=opt.upscale)
+    if opt.model == '3':
+        model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
 
     model = model.to(opt.device)
     if opt.loss == '1':
