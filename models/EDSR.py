@@ -9,6 +9,12 @@ def default_conv(in_channels, out_channels, kernel_size, bias=True):
         padding=(kernel_size//2), bias=bias)
 
 
+def down_conv(in_channels, out_channels, kernel_size, bias=True, stride=4):
+    return nn.Conv2d(
+        in_channels, out_channels, kernel_size,
+        padding=(kernel_size//2), bias=bias, stride=stride)
+
+
 class ResBlock(nn.Module):
     def __init__(
         self, conv, n_feat, kernel_size,
@@ -93,15 +99,14 @@ class EDSR(nn.Module):
         self.head = nn.Sequential(*m_head)
         self.body = nn.Sequential(*m_body)
         self.tail = nn.Sequential(*m_tail)
-        self.conv_rgb = default_conv(3, 31, kernel_size)
+        self.conv_rgb = down_conv(3, n_feats, kernel_size, stride=scale)
 
     def forward(self, x, y):
         x = self.head(x)
-
-        res = self.body(x)
-        res += x
         y = self.conv_rgb(y)
+        res = self.body(x+y)
+        res += x
         x = self.tail(res)
-        return x + y
+        return x
 
 #model = EDSR() loss L1

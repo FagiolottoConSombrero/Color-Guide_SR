@@ -8,6 +8,11 @@ def default_conv(in_channels, out_channels, kernel_size, bias=True):
         in_channels, out_channels, kernel_size,
         padding=(kernel_size//2), bias=bias)
 
+def down_conv(in_channels, out_channels, kernel_size, bias=True, stride=4):
+    return nn.Conv2d(
+        in_channels, out_channels, kernel_size,
+        padding=(kernel_size//2), bias=bias, stride=stride)
+
 
 class Upsampler(nn.Sequential):
     def __init__(self, conv, scale, n_feat, bn=False, act=False, bias=True):
@@ -137,15 +142,14 @@ class RCAN(nn.Module):
         self.head = nn.Sequential(*modules_head)
         self.body = nn.Sequential(*modules_body)
         self.tail = nn.Sequential(*modules_tail)
-        self.conv_rgb = conv(3, n_feats, kernel_size)
+        self.conv_rgb = down_conv(3, n_feats, kernel_size, stride=scale)
 
     def forward(self, x, y):
         x = self.head(x)
-
-        res = self.body(x)
+        y = self.conv_rgb(y)
+        res = self.body(x + y)
         res += x
-        x = x + self.conv_rgb(y)
-        x = self.tail(res + x)
+        x = self.tail(res)
         return x
 
 

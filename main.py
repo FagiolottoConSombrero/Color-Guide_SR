@@ -31,11 +31,16 @@ def main():
     loss = None
     opt = parser.parse_args()
     print(opt)
+    if opt.upscale == 4:
+        train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
+        val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
+    else:
+        train_x = os.path.join(opt.t_data_path, 'train_rad1k_x6')
+        val_x = os.path.join(opt.v_data_path, 'val_rad1k_x6')
 
-    train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
     train_x_rgb = os.path.join(opt.t_data_path, 'Train_RGB')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
-    val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
+
     val_x_rgb = os.path.join(opt.v_data_path, 'Valid_RGB')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
