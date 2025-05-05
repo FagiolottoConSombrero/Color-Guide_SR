@@ -2,6 +2,7 @@
 from models.SSPSR import SSPSR
 from models.EDSR import EDSR
 from models.RCAN import RCAN
+from models.model.CGNet import CGNet
 from engine import *
 from dataset import *
 import torch.optim as optim
@@ -58,6 +59,8 @@ def main():
         model = RCAN(scale=opt.upscale)
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
+    if opt.model == '4':
+        model = CGNet()
 
     model = model.to(opt.device)
     if opt.loss == '1':
