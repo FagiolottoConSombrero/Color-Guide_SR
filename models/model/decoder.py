@@ -1,4 +1,4 @@
-from common import *
+from models.model.common import *
 import torch
 
 
