@@ -1,4 +1,3 @@
-#from models.SPAN import *
 from models.SSPSR import SSPSR
 from models.EDSR import EDSR
 from models.RCAN import RCAN
@@ -8,19 +7,18 @@ from dataset import *
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import argparse
-from torch.nn import MSELoss, SmoothL1Loss, L1Loss
+from torch.nn import SmoothL1Loss, L1Loss
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
 parser = argparse.ArgumentParser(description='Color-Guided Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
-parser.add_argument('--pretrained', type=bool, default=False, help='load pretrained model')
 parser.add_argument('--upscale', type=int, default=4, help='increase upscale factor')
-parser.add_argument('--model_path', type=str, default='', help="path to pretrained model")
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
 parser.add_argument('--batch_size', type=int, default='2', help='Training batch size')
-parser.add_argument("--epochs", type=int, default=600, help="Number of epochs to train for")
+parser.add_argument("--epochs", type=int, default=1000, help="Number of epochs to train for")
+parser.add_argument("--alpha", type=float, default=0.5, help="Hyperparameter for loss function")
 parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate. Default=0.001")
 parser.add_argument("--loss", type=str, default='1', help="loss, default=L1")
 parser.add_argument('--save_path', type=str, default='', help="Path to model checkpoint")
@@ -66,7 +64,7 @@ def main():
     if opt.loss == '1':
         loss = L1Loss()
     elif opt.loss == '2':
-        loss = SmoothL1Loss()
+        loss = L1_SAM_Loss(alpha=opt.alpha)
     elif opt.loss == '3':
         loss = HybridLoss(spatial_tv=True, spectral_tv=True)
 

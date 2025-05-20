@@ -1,6 +1,6 @@
 import os
 import torch
-
+import torch.nn as nn
 
 def save_checkpoint(model, epoch):
     model_out_path = "checkpoint/" + "model_epoch_{}.pth".format(epoch)
@@ -120,3 +120,37 @@ class TVLossSpectral(torch.nn.Module):
 
     def _tensor_size(self, t):
         return t.size()[1] * t.size()[2] * t.size()[3]
+
+class SAMLoss(nn.Module):
+    def __init__(self, eps=1e-8):
+        super(SAMLoss, self).__init__()
+        self.eps = eps
+
+    def forward(self, x, y):
+        # x, y: [B, C, H, W]
+        dot_product = torch.sum(x * y, dim=1)  # [B, H, W]
+        norm_x = torch.norm(x, dim=1)          # [B, H, W]
+        norm_y = torch.norm(y, dim=1)          # [B, H, W]
+
+        denominator = norm_x * norm_y + self.eps
+        cos_theta = dot_product / denominator
+        cos_theta = torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
+        angle = torch.acos(cos_theta)  # radianti
+
+        return angle.mean()
+
+
+class L1_SAM_Loss(nn.Module):
+    def __init__(self, alpha=0.5):
+        """
+        alpha: peso per L1, (1 - alpha) per SAM
+        """
+        super(L1_SAM_Loss, self).__init__()
+        self.alpha = alpha
+        self.l1 = nn.L1Loss()
+        self.sam = SAMLoss()
+
+    def forward(self, pred, target):
+        loss_l1 = self.l1(pred, target)
+        loss_sam = self.sam(pred, target)
+        return self.alpha * loss_l1 + (1 - self.alpha) * loss_sam
