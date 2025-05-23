@@ -58,7 +58,7 @@ def main():
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
-        model = CGNet()
+        model = CGNet(out_ch=128)
 
     model = model.to(opt.device)
     if opt.loss == '1':
