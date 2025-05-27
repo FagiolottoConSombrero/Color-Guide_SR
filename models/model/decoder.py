@@ -4,9 +4,9 @@ import torch
 class Decoder(nn.Module):
     def __init__(self, in_ch=64, out_ch=64):
         super(Decoder, self).__init__()
-        self.first_conv = self.pixelshuffle_block(in_channels=in_ch*2, out_channels=out_ch)
-        self.second_conv = self.pixelshuffle_block(in_channels=in_ch*2+out_ch, out_channels=out_ch)
-        self.last_conv = Conv3XC(in_ch*2+out_ch, 31, gain1=1, s=1, relu=True)
+        self.first_conv = self.pixelshuffle_block(in_channels=128, out_channels=64)
+        self.second_conv = self.pixelshuffle_block(in_channels=192, out_channels=64)
+        self.last_conv = Conv3XC(192, 31, gain1=1, s=1, relu=True)
 
     def pixelshuffle_block(self,
                            in_channels,
