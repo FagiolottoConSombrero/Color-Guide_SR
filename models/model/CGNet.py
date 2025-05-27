@@ -7,7 +7,7 @@ class CGNet(nn.Module):
     """
     Modello fatto da Matteo Kolyszko
     """
-    def __init__(self, out_ch=128):
+    def __init__(self, out_ch=64):
         super(CGNet, self).__init__()
         self.encoder_rgb = RGBEncoder(out_ch=out_ch)
         self.encoder_hsi = HSIEncoder(out_ch=out_ch)
