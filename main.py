@@ -18,6 +18,7 @@ parser.add_argument('--pretrained', type=bool, default=False, help='pretrained m
 parser.add_argument('--pretrained_path', type=str, default='', help='pretrained model path')
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
+parser.add_argument('--features', type=int, default=64, help='number of feature maps')
 parser.add_argument('--batch_size', type=int, default='2', help='Training batch size')
 parser.add_argument("--epochs", type=int, default=1000, help="Number of epochs to train for")
 parser.add_argument("--alpha", type=float, default=0.5, help="Hyperparameter for loss function")
@@ -60,7 +61,7 @@ def main():
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
-        model = CGNet(out_ch=64)
+        model = CGNet(out_ch=opt.features)
         if opt.pretrained:
             model.load_state_dict(torch.load(opt.pretrained_path))
 
