@@ -122,20 +122,18 @@ class TVLossSpectral(torch.nn.Module):
         return t.size()[1] * t.size()[2] * t.size()[3]
 
 class SAMLoss(nn.Module):
-    def __init__(self, eps=1e-8):
+    def __init__(self, eps=1e-6):  # eps un po' più grande
         super(SAMLoss, self).__init__()
         self.eps = eps
 
     def forward(self, x, y):
-        # x, y: [B, C, H, W]
         dot_product = torch.sum(x * y, dim=1)  # [B, H, W]
-        norm_x = torch.norm(x, dim=1)          # [B, H, W]
-        norm_y = torch.norm(y, dim=1)          # [B, H, W]
+        norm_x = torch.norm(x, dim=1) + self.eps
+        norm_y = torch.norm(y, dim=1) + self.eps
 
-        denominator = norm_x * norm_y + self.eps
-        cos_theta = dot_product / denominator
-        cos_theta = torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
-        angle = torch.acos(cos_theta)  # radianti
+        cos_theta = dot_product / (norm_x * norm_y)
+        cos_theta = torch.clamp(cos_theta, -1.0, 1.0)  # clamp più conservativo
+        angle = torch.acos(cos_theta)
 
         return angle.mean()
 

@@ -14,12 +14,13 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 parser = argparse.ArgumentParser(description='Color-Guided Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
 parser.add_argument('--upscale', type=int, default=4, help='increase upscale factor')
+parser.add_argument('--pretrained', type=bool, default=False, help='pretrained model')
+parser.add_argument('--pretrained_path', type=str, default='', help='pretrained model path')
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
 parser.add_argument('--batch_size', type=int, default='2', help='Training batch size')
 parser.add_argument("--epochs", type=int, default=1000, help="Number of epochs to train for")
 parser.add_argument("--alpha", type=float, default=0.5, help="Hyperparameter for loss function")
-parser.add_argument("--features", type=int, default=64, help="number of channels of feature maps")
 parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate. Default=0.001")
 parser.add_argument("--loss", type=str, default='1', help="loss, default=L1")
 parser.add_argument('--save_path', type=str, default='', help="Path to model checkpoint")
@@ -59,7 +60,9 @@ def main():
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
-        model = CGNet(out_ch=opt.features)
+        model = CGNet(out_ch=64)
+        if opt.pretrained:
+            model.load_state_dict(torch.load(opt.pretrained_path))
 
     model = model.to(opt.device)
     if opt.loss == '1':
