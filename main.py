@@ -81,7 +81,7 @@ def main():
         optimizer,
         mode='min',
         factor=0.5,
-        patience=10
+        patience=50
     )
 
     print("===> Starting Training")

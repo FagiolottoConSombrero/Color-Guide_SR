@@ -58,7 +58,7 @@ def train(train_loader,
           device,
           best_model_path,
           criterion,
-          patience=50,
+          patience=100,
           scheduler=None):  # <--- aggiunto
 
     early_stopping = EarlyStopping(patience=patience, mode='min')
@@ -79,7 +79,7 @@ def train(train_loader,
         # Stampa il learning rate corrente
         current_lr = optimizer.param_groups[0]['lr']
         print(
-            f"LR: {current_lr:.6f} | "
+            f"LR: {current_lr:.10f} | "
             f"Train loss: {train_loss:.8f} | "
             f"Val loss: {val_loss:.8f}"
         )
