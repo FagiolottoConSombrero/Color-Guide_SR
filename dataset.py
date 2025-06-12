@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 
 class AradDataset(Dataset):
-    def __init__(self, x_dir, x_rgb, y_dir, transform_rgb=None):
+    def __init__(self, x_dir, x_rgb, y_dir, transform_rgb=None, stereo=False):
         self.x_dir = x_dir
         self.x_rgb = x_rgb
         self.y_dir = y_dir
@@ -14,7 +14,8 @@ class AradDataset(Dataset):
             f for f in os.listdir(x_dir)
             if f.endswith('.h5') and not f.startswith('._')
         ])
-        self.transform_rgb = transform_rgb  # per eventuali trasformazioni tipo resize, to_tensor...
+        self.transform_rgb = transform_rgb
+        self.stereo = stereo
 
     def __len__(self):
         return len(self.file_list)
@@ -26,7 +27,10 @@ class AradDataset(Dataset):
         # Percorsi
         x_path = os.path.join(self.x_dir, file_name)
         y_path = os.path.join(self.y_dir, file_name)
-        rgb_path = os.path.join(self.x_rgb, file_base + '.jpg')
+        if self.stereo:
+            rgb_path = os.path.join(self.x_rgb, file_base + '_rgb.tiff')
+        else:
+            rgb_path = os.path.join(self.x_rgb, file_base + '.jpg')
 
         # Carica i dati
         x = self._load_h5(x_path)
@@ -38,7 +42,11 @@ class AradDataset(Dataset):
     def _load_h5(self, path):
         with h5py.File(path, 'r') as f:
             data = f['data'][()]
-        return torch.tensor(data, dtype=torch.float32)
+            if self.stereo:
+                data = torch.tensor(data, dtype=torch.float32)/ 255.0
+            else:
+                data = torch.tensor(data, dtype=torch.float32)
+        return data
 
     def _load_rgb(self, path):
         img = Image.open(path).convert('RGB')
@@ -47,5 +55,8 @@ class AradDataset(Dataset):
         else:
             img = torch.tensor(np.array(img), dtype=torch.float32) / 255.0  # normalizza 0-1
             img = img.permute(2, 0, 1)  # da (H, W, C) a (C, H, W)
-            img = img[:, 1:481, 4:508]
+            if self.stereo:
+                img = img[:, 4:268, 4:508]
+            else:
+                img = img[:, 1:481, 4:508]
         return img

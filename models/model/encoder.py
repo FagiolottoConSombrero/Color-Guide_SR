@@ -38,7 +38,7 @@ class RGBEncoder6(nn.Module):
 class HSIEncoder(nn.Module):
     def __init__(self, in_ch=31, out_ch=64, kernel_size=3):
         super(HSIEncoder, self).__init__()
-        self.first_layer = self.conv_relu(in_ch, out_ch, kernel_size=kernel_size)
+        self.first_layer = Conv3XC(in_ch, out_ch, gain1=1, s=1, relu=True)
         self.pixel_upsample = self.pixelshuffle_block(out_ch, out_ch)
         self.pixel_upsample_2 = self.pixelshuffle_block(out_ch, out_ch)
 
@@ -52,12 +52,6 @@ class HSIEncoder(nn.Module):
                           kernel_size)
         pixel_shuffle = nn.PixelShuffle(upscale_factor)
         return sequential(conv, pixel_shuffle)
-
-    def conv_relu(self, in_channels, out_channels, kernel_size, stride=1, padding=1):
-        return nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
-            nn.ReLU(inplace=True)
-        )
 
     def forward(self, x):
         conv1 = self.first_layer(x)

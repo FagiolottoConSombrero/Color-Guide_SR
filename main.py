@@ -27,6 +27,8 @@ parser.add_argument("--loss", type=str, default='1', help="loss, default=L1")
 parser.add_argument('--save_path', type=str, default='', help="Path to model checkpoint")
 parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu",
                     help="Device to run the script on: 'cuda' or 'cpu'. ")
+parser.add_argument('--stereoMSI', type=bool, default=False, help="for selecting StereoMSI dataset")
+parser.add_argument('--input_channel', type=int, default=31, help="input channel")
 
 def main():
     model = None
@@ -34,23 +36,23 @@ def main():
     opt = parser.parse_args()
     print(opt)
     if opt.upscale == 4:
-        train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
-        val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
+        train_x = os.path.join(opt.t_data_path, 'train_x4')
+        val_x = os.path.join(opt.v_data_path, 'val_x4')
     else:
-        train_x = os.path.join(opt.t_data_path, 'train_rad1k_x6')
-        val_x = os.path.join(opt.v_data_path, 'val_rad1k_x6')
+        train_x = os.path.join(opt.t_data_path, 'train_x6')
+        val_x = os.path.join(opt.v_data_path, 'val_x6')
 
-    train_x_rgb = os.path.join(opt.t_data_path, 'Train_RGB')
-    train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
+    train_x_rgb = os.path.join(opt.t_data_path, 'train_rgb')
+    train_y = os.path.join(opt.t_data_path, 'train_original')
 
-    val_x_rgb = os.path.join(opt.v_data_path, 'Valid_RGB')
-    val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
+    val_x_rgb = os.path.join(opt.v_data_path, 'val_rgb')
+    val_y = os.path.join(opt.v_data_path, 'val_original')
 
     print("===> Loading data")
-    train_set = AradDataset(train_x, train_x_rgb, train_y)
+    train_set = AradDataset(train_x, train_x_rgb, train_y, stereo=opt.stereoMSI)
     train_loader = DataLoader(train_set, batch_size=opt.batch_size, shuffle=True)
 
-    valid_set = AradDataset(val_x, val_x_rgb, val_y)
+    valid_set = AradDataset(val_x, val_x_rgb, val_y, stereo=opt.stereoMSI)
     valid_loader = DataLoader(valid_set, batch_size=opt.batch_size, shuffle=False)
 
     print("===> Building model")
@@ -61,7 +63,7 @@ def main():
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
-        model = CGNet(out_ch=opt.features, scale=opt.upscale)
+        model = CGNet(in_ch=opt.input_channel, out_ch=opt.features, scale=opt.upscale)
         if opt.pretrained:
             model.load_state_dict(torch.load(opt.pretrained_path))
 
