@@ -203,10 +203,10 @@ class SSPSR(nn.Module):
         b, c, h, w = x.shape
 
         # Initialize intermediate “result”, which is upsampled with n_scale//2 times
-        y = torch.zeros(b, c, self.sca * h, self.sca * w, device=x.device)
+        y = torch.zeros(b, c, self.sca * h, self.sca * w).cuda()
         # y = torch.zeros(b, c, self.sca * h, self.sca * w)
 
-        channel_counter = torch.zeros(c)
+        channel_counter = torch.zeros(c).cuda()
         # channel_counter = torch.zeros(c)
 
         for g in range(self.G):
