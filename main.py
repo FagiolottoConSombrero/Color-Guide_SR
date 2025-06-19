@@ -57,11 +57,11 @@ def main():
 
     print("===> Building model")
     if opt.model == '1':
-        model = EDSR(scale=opt.upscale)
+        model = EDSR(scale=opt.upscale, n_colors=opt.input_channel)
     if opt.model == '2':
         model = RCAN(scale=opt.upscale)
     if opt.model == '3':
-        model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
+        model = SSPSR(n_subs=8, n_ovls=2, n_colors=opt.input_channel, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
         model = CGNet(in_ch=opt.input_channel, out_ch=opt.features, scale=opt.upscale)
         if opt.pretrained:
