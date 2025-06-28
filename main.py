@@ -14,7 +14,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 parser = argparse.ArgumentParser(description='Color-Guided Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
 parser.add_argument('--upscale', type=int, default=4, help='increase upscale factor')
-parser.add_argument('--pretrained', type=bool, default=False, help='pretrained model')
+parser.add_argument('--3', type=bool, default=False, help='pretrained model')
 parser.add_argument('--pretrained_path', type=str, default='', help='pretrained model path')
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
@@ -59,7 +59,7 @@ def main():
     if opt.model == '1':
         model = EDSR(scale=opt.upscale, n_colors=opt.input_channel)
     if opt.model == '2':
-        model = RCAN(scale=opt.upscale)
+        model = RCAN(scale=opt.upscale, n_colors=opt.input_channel)
     if opt.model == '3':
         model = SSPSR(n_subs=8, n_ovls=2, n_colors=opt.input_channel, n_blocks=3, n_feats=256, n_scale=opt.upscale, res_scale=0.1)
     if opt.model == '4':
